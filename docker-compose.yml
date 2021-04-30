@@ -1,0 +1,39 @@
+version: "3.7"
+
+services:
+
+  web:
+    # image: nginx:1.17
+    container_name: webserver
+    build:
+      context: ./webserver
+    ports:
+      - 80:80
+    volumes:
+      - ./public:/var/www/sitex
+      # - ./public:/var/www/sitex/public
+      - ./webserver/config/site.conf:/etc/nginx/conf.d/site.conf
+    depends_on:
+      - php
+
+  php:
+    container_name: php
+    # image: php:7.2-fpm
+    build:
+      context: ./php
+    volumes:
+      - ./public:/var/www/sitex
+      - ./public:/var/www/sitex/public
+      - ./php/php.ini:/usr/local/etc/php/php.ini
+
+  database:
+    container_name: db
+    build:
+      context: ./database
+    environment:
+      - MYSQL_DATABASE=sitex
+      - MYSQL_USER=sitex_access
+      - MYSQL_PASSWORD=s1t3x4cc3ss
+      - MYSQL_ROOT_PASSWORD=s1t3x4cc3ssfu77
+    ports:
+      - "8082:3306"
